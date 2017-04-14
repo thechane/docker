@@ -1,0 +1,228 @@
+[
+    {
+        "id": "6227d1b1.9c45a",
+        "type": "tab",
+        "label": "Get Response Test"
+    },
+    {
+        "id": "6149644.6ae141c",
+        "type": "tab",
+        "label": "SoapUI logic"
+    },
+    {
+        "id": "7fab883a.4da348",
+        "type": "http in",
+        "z": "6227d1b1.9c45a",
+        "name": "Simple",
+        "url": "/hello",
+        "method": "get",
+        "swaggerDoc": "",
+        "x": 168,
+        "y": 150,
+        "wires": [
+            [
+                "5037827a.50f70c"
+            ]
+        ]
+    },
+    {
+        "id": "5037827a.50f70c",
+        "type": "function",
+        "z": "6227d1b1.9c45a",
+        "name": "Hello",
+        "func": "msg.payload = \"world\"\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 336,
+        "y": 150,
+        "wires": [
+            [
+                "d21c67a7.8d08c8"
+            ]
+        ]
+    },
+    {
+        "id": "d21c67a7.8d08c8",
+        "type": "http response",
+        "z": "6227d1b1.9c45a",
+        "name": "world test",
+        "x": 511,
+        "y": 149,
+        "wires": []
+    },
+    {
+        "id": "3c8790c7.b236b8",
+        "type": "http in",
+        "z": "6149644.6ae141c",
+        "name": "",
+        "url": "/soapuiproject",
+        "method": "post",
+        "swaggerDoc": "",
+        "x": 142.88333129882812,
+        "y": 60.883331298828125,
+        "wires": [
+            [
+                "66519276.d2fffc"
+            ]
+        ]
+    },
+    {
+        "id": "3becd707.5b81d8",
+        "type": "file",
+        "z": "6149644.6ae141c",
+        "name": "",
+        "filename": "/tmp/soapuiproject.xml",
+        "appendNewline": false,
+        "createDir": false,
+        "overwriteFile": "true",
+        "x": 600.88330078125,
+        "y": 60.883331298828125,
+        "wires": []
+    },
+    {
+        "id": "85317c3a.41df28",
+        "type": "watch",
+        "z": "6149644.6ae141c",
+        "name": "",
+        "files": "/tmp/soapuiproject.xml",
+        "x": 125.88330078125,
+        "y": 348.8833312988281,
+        "wires": [
+            [
+                "aae4d066.5cf548"
+            ]
+        ]
+    },
+    {
+        "id": "aae4d066.5cf548",
+        "type": "exec",
+        "z": "6149644.6ae141c",
+        "command": "testrunner.sh -f /tmp -M /tmp/soapuiproject.xml",
+        "addpay": false,
+        "append": "",
+        "useSpawn": "",
+        "timer": "",
+        "name": "execute tests",
+        "x": 339.88330078125,
+        "y": 347.3833312988281,
+        "wires": [
+            [
+                "f4a27793.a4043"
+            ],
+            [],
+            []
+        ]
+    },
+    {
+        "id": "9e5116ce.52237",
+        "type": "http response",
+        "z": "6149644.6ae141c",
+        "name": "respond with results",
+        "x": 1025.88330078125,
+        "y": 199.88333129882812,
+        "wires": []
+    },
+    {
+        "id": "28952f48.9a4268",
+        "type": "file in",
+        "z": "6149644.6ae141c",
+        "name": "results xml file",
+        "filename": "/tmp/test_case_run_log_report.xml",
+        "format": "utf8",
+        "x": 715.88330078125,
+        "y": 332.8833312988281,
+        "wires": [
+            [
+                "4f0dde1d.a0f888",
+                "6f7f2231.0ce414"
+            ]
+        ]
+    },
+    {
+        "id": "66519276.d2fffc",
+        "type": "function",
+        "z": "6149644.6ae141c",
+        "name": "set http topic",
+        "func": "msg.topic=\"http\";\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 352.7666320800781,
+        "y": 60.48333740234375,
+        "wires": [
+            [
+                "3becd707.5b81d8",
+                "6f7f2231.0ce414",
+                "6ea24e20.b9d84"
+            ]
+        ]
+    },
+    {
+        "id": "f4a27793.a4043",
+        "type": "function",
+        "z": "6149644.6ae141c",
+        "name": "set soapui topic",
+        "func": "msg.topic=\"soapui\";\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 532.7666320800781,
+        "y": 333.48333740234375,
+        "wires": [
+            [
+                "28952f48.9a4268"
+            ]
+        ]
+    },
+    {
+        "id": "6f7f2231.0ce414",
+        "type": "function",
+        "z": "6149644.6ae141c",
+        "name": "merge",
+        "func": "context.data = context.data || {}\n\nswitch (msg.topic) {\n    case \"http\":\n        //msg.req : http request\n        //msg.res : http response\n        context.data.httpreq = msg.req;\n        context.data.httpres = msg.res;\n        break;\n    case \"soapui\":\n        context.data.soapui = msg.payload;\n        break;\n    default:\n    \tbreak;\n}\n\nif (context.data.soapui != null && context.data.httpres != null) {\n    msg.payload = context.data.soapui;\n    msg.req = context.data.httpreq;\n    msg.res = context.data.httpres;\n    return msg;\n} else {\n    return null;  //returning a null message = wait for another input\n}",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 716.7666015625,
+        "y": 198.48333740234375,
+        "wires": [
+            [
+                "9e5116ce.52237",
+                "f0eba7af.3fdb2"
+            ]
+        ]
+    },
+    {
+        "id": "6ea24e20.b9d84",
+        "type": "debug",
+        "z": "6149644.6ae141c",
+        "name": "",
+        "active": false,
+        "console": "false",
+        "complete": "true",
+        "x": 307.76666259765625,
+        "y": 167.48333740234375,
+        "wires": []
+    },
+    {
+        "id": "4f0dde1d.a0f888",
+        "type": "debug",
+        "z": "6149644.6ae141c",
+        "name": "",
+        "active": false,
+        "console": "false",
+        "complete": "true",
+        "x": 912.7666015625,
+        "y": 332.48333740234375,
+        "wires": []
+    },
+    {
+        "id": "f0eba7af.3fdb2",
+        "type": "debug",
+        "z": "6149644.6ae141c",
+        "name": "",
+        "active": false,
+        "console": "false",
+        "complete": "true",
+        "x": 835.7666320800781,
+        "y": 131.48333740234375,
+        "wires": []
+    }
+]

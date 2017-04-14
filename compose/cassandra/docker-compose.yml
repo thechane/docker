@@ -1,0 +1,81 @@
+version: '3.1'
+services:
+
+#############################
+## CASSANDRA
+#############################
+
+#dock exec -i cassandra3 nodetool status
+#dock exec -i cassandra3 nodetool repair sarea
+#dock exec -it cassandra3 bash
+##set logging level - https://docs.datastax.com/en/cassandra/2.1/cassandra/tools/toolsSetLogLev.html
+#dock exec -i cassandra3 nodetool setlogginglevel org.apache.cassandra WARN
+
+  seed:
+    image: "-:REGSERVER/com.att.noc.na2/cassandra:3"
+    deploy:
+      restart_policy:
+        condition: none
+      replicas: 1
+#      placement:
+#        constraints:
+#          - "engine.labels.access == cassandra"    #eventually this
+    environment:
+      - "CASSANDRA_BROADCAST_ADDRESS=seed"
+      - "CASSANDRA_ENDPOINT_SNITCH=GossipingPropertyFileSnitch"
+      - "CASSANDRA_CLUSTER_NAME=na2"
+      - "CASSANDRA_RACK=bgtmonetapps1"
+      - "CASSANDRA_DC=bgtmo"
+      - "CASSANDRA_START_RPC=true"
+      - "CASSANDRA_RPC_ADDRESS=seed"
+    networks:
+      cassandra:
+        aliases:
+          - "cassandra"
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "2"
+
+  cluster:
+    image: "-:REGSERVER/com.att.noc.na2/cassandra:3"
+    depends_on:
+      - "seed"
+    deploy:
+      mode: global
+      placement:
+        constraints:
+#          - "engine.labels.access == cassandra" #eventually this
+          - "engine.labels.access == dmz"
+          - "engine.labels.access != hoho"
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s
+    environment:
+      - "CASSANDRA_BROADCAST_ADDRESS=cassandra"
+      - "CASSANDRA_SEEDS=seed"
+      - "CASSANDRA_ENDPOINT_SNITCH=GossipingPropertyFileSnitch"
+      - "CASSANDRA_CLUSTER_NAME=na2"
+      - "CASSANDRA_RACK=bgtmonetapps1"
+      - "CASSANDRA_DC=bgtmo"
+      - "CASSANDRA_START_RPC=true"
+    networks:
+      cassandra:
+        aliases:
+          - "cassandra"
+    volumes:
+      - "/home/docker/cassandra:/var/lib/cassandra"
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "2"
+
+#$ docker network create -d overlay --attachable cassandra
+networks:
+  cassandra:
+    external:
+      name: cassandra
