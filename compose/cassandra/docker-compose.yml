@@ -12,7 +12,7 @@ services:
 #dock exec -i cassandra3 nodetool setlogginglevel org.apache.cassandra WARN
 
   seed:
-    image: "-:REGSERVER/com.att.noc.na2/cassandra:3"
+    image: "cassandra:3"
     deploy:
       restart_policy:
         condition: none
@@ -39,7 +39,7 @@ services:
         max-file: "2"
 
   cluster:
-    image: "-:REGSERVER/com.att.noc.na2/cassandra:3"
+    image: "cassandra:3"
     depends_on:
       - "seed"
     deploy:
@@ -66,8 +66,8 @@ services:
       cassandra:
         aliases:
           - "cassandra"
-    volumes:
-      - "/home/docker/cassandra:/var/lib/cassandra"
+#    volumes:
+#      - "/home/docker/cassandra:/var/lib/cassandra"
     logging:
       driver: "json-file"
       options:
