@@ -1,7 +1,7 @@
 FROM openjdk:8-jre-alpine
 ENV SOAPUI_VERSION 5.3.0
 RUN apk add --update python nodejs bash gcc make g++ curl && \
-  npm install -g node-red node-red-contrib-cassandra node-red-node-base64 node-red-contrib-amqp node-red-node-ping node-red-node-daemon && \
+  npm install -g node-red && \
   mkdir -p /home/nodered/.node-red/ /opt && \
   curl  http://cdn01.downloads.smartbear.com/soapui/${SOAPUI_VERSION}/SoapUI-${SOAPUI_VERSION}-linux-bin.tar.gz \
   | gunzip -c - | tar -xf - -C /opt && \
@@ -9,6 +9,6 @@ RUN apk add --update python nodejs bash gcc make g++ curl && \
   apk del gcc make g++ curl && \
   rm -Rf /var/cache/apk/* /tmp/* && npm cache clean
 ENV PATH ${PATH}:/opt/SoapUI/bin
-#COPY ./static-settings.js /root/.node-red/settings.js
+COPY ./static-settings.js /root/.node-red/settings.js
 COPY ./flows.json /home/nodered/.node-red/flows.json
-ENTRYPOINT ["/usr/bin/node-red"]
+ENTRYPOINT ["/usr/bin/node-red", "-v"]
