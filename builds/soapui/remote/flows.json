@@ -118,8 +118,8 @@
         "type": "http response",
         "z": "6149644.6ae141c",
         "name": "respond with results",
-        "x": 1025.88330078125,
-        "y": 199.88333129882812,
+        "x": 909.88330078125,
+        "y": 197.88333129882812,
         "wires": []
     },
     {
@@ -177,7 +177,7 @@
         "type": "function",
         "z": "6149644.6ae141c",
         "name": "merge",
-        "func": "context.data = context.data || {}\n\nswitch (msg.topic) {\n    case \"http\":\n        //msg.req : http request\n        //msg.res : http response\n        context.data.httpreq = msg.req;\n        context.data.httpres = msg.res;\n        break;\n    case \"soapui\":\n        context.data.soapui = msg.payload;\n        break;\n    default:\n    \tbreak;\n}\n\nif (context.data.soapui != null && context.data.httpres != null) {\n    msg.payload = context.data.soapui;\n    msg.req = context.data.httpreq;\n    msg.res = context.data.httpres;\n    return msg;\n} else {\n    return null;  //returning a null message = wait for another input\n}",
+        "func": "context.data = context.data || {}\n\nswitch (msg.topic) {\n    case \"http\":\n        //msg.req : http request\n        //msg.res : http response\n        context.data.httpreq = msg.req;\n        context.data.httpres = msg.res;\n        break;\n    case \"soapui\":\n        context.data.soapui = msg.payload;\n        break;\n    default:\n    \tbreak;\n}\n\nif (context.data.soapui != null && context.data.httpres != null) {\n    msg.payload = context.data.soapui;\n    msg.req = context.data.httpreq;\n    msg.res = context.data.httpres;\n    msg.headers = { 'Content-Type': 'text/xml' }\n    return msg;\n} else {\n    return null;  //returning a null message = wait for another input\n}",
         "outputs": 1,
         "noerr": 0,
         "x": 716.7666015625,
@@ -197,8 +197,8 @@
         "active": false,
         "console": "false",
         "complete": "true",
-        "x": 307.76666259765625,
-        "y": 167.48333740234375,
+        "x": 346.76666259765625,
+        "y": 169.48333740234375,
         "wires": []
     },
     {

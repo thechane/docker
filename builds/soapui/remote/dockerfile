@@ -11,4 +11,5 @@ RUN apk add --update python nodejs bash gcc make g++ curl && \
 ENV PATH ${PATH}:/opt/SoapUI/bin
 COPY ./static-settings.js /root/.node-red/settings.js
 COPY ./flows.json /home/nodered/.node-red/flows.json
+RUN touch /tmp/soapuiproject.xml
 ENTRYPOINT ["/usr/bin/node-red", "-v"]
