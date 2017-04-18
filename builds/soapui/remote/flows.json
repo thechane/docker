@@ -1,228 +1,265 @@
 [
-    {
-        "id": "6227d1b1.9c45a",
-        "type": "tab",
-        "label": "Get Response Test"
-    },
-    {
-        "id": "6149644.6ae141c",
-        "type": "tab",
-        "label": "SoapUI logic"
-    },
-    {
-        "id": "7fab883a.4da348",
-        "type": "http in",
-        "z": "6227d1b1.9c45a",
-        "name": "Simple",
-        "url": "/hello",
-        "method": "get",
-        "swaggerDoc": "",
-        "x": 168,
-        "y": 150,
-        "wires": [
-            [
-                "5037827a.50f70c"
-            ]
-        ]
-    },
-    {
-        "id": "5037827a.50f70c",
-        "type": "function",
-        "z": "6227d1b1.9c45a",
-        "name": "Hello",
-        "func": "msg.payload = \"world\"\nreturn msg;",
-        "outputs": 1,
-        "noerr": 0,
-        "x": 336,
-        "y": 150,
-        "wires": [
-            [
-                "d21c67a7.8d08c8"
-            ]
-        ]
-    },
-    {
-        "id": "d21c67a7.8d08c8",
-        "type": "http response",
-        "z": "6227d1b1.9c45a",
-        "name": "world test",
-        "x": 511,
-        "y": 149,
-        "wires": []
-    },
-    {
-        "id": "3c8790c7.b236b8",
-        "type": "http in",
-        "z": "6149644.6ae141c",
-        "name": "",
-        "url": "/soapuiproject",
-        "method": "post",
-        "swaggerDoc": "",
-        "x": 142.88333129882812,
-        "y": 60.883331298828125,
-        "wires": [
-            [
-                "66519276.d2fffc"
-            ]
-        ]
-    },
-    {
-        "id": "3becd707.5b81d8",
-        "type": "file",
-        "z": "6149644.6ae141c",
-        "name": "",
-        "filename": "/tmp/soapuiproject.xml",
-        "appendNewline": false,
-        "createDir": false,
-        "overwriteFile": "true",
-        "x": 600.88330078125,
-        "y": 60.883331298828125,
-        "wires": []
-    },
-    {
-        "id": "85317c3a.41df28",
-        "type": "watch",
-        "z": "6149644.6ae141c",
-        "name": "",
-        "files": "/tmp/soapuiproject.xml",
-        "x": 125.88330078125,
-        "y": 348.8833312988281,
-        "wires": [
-            [
-                "aae4d066.5cf548"
-            ]
-        ]
-    },
-    {
-        "id": "aae4d066.5cf548",
-        "type": "exec",
-        "z": "6149644.6ae141c",
-        "command": "testrunner.sh -f /tmp -M /tmp/soapuiproject.xml",
-        "addpay": false,
-        "append": "",
-        "useSpawn": "",
-        "timer": "",
-        "name": "execute tests",
-        "x": 339.88330078125,
-        "y": 347.3833312988281,
-        "wires": [
-            [
-                "f4a27793.a4043"
-            ],
-            [],
-            []
-        ]
-    },
-    {
-        "id": "9e5116ce.52237",
-        "type": "http response",
-        "z": "6149644.6ae141c",
-        "name": "respond with results",
-        "x": 909.88330078125,
-        "y": 197.88333129882812,
-        "wires": []
-    },
-    {
-        "id": "28952f48.9a4268",
-        "type": "file in",
-        "z": "6149644.6ae141c",
-        "name": "results xml file",
-        "filename": "/tmp/test_case_run_log_report.xml",
-        "format": "utf8",
-        "x": 715.88330078125,
-        "y": 332.8833312988281,
-        "wires": [
-            [
-                "4f0dde1d.a0f888",
-                "6f7f2231.0ce414"
-            ]
-        ]
-    },
-    {
-        "id": "66519276.d2fffc",
-        "type": "function",
-        "z": "6149644.6ae141c",
-        "name": "set http topic",
-        "func": "msg.topic=\"http\";\nreturn msg;",
-        "outputs": 1,
-        "noerr": 0,
-        "x": 352.7666320800781,
-        "y": 60.48333740234375,
-        "wires": [
-            [
-                "3becd707.5b81d8",
-                "6f7f2231.0ce414",
-                "6ea24e20.b9d84"
-            ]
-        ]
-    },
-    {
-        "id": "f4a27793.a4043",
-        "type": "function",
-        "z": "6149644.6ae141c",
-        "name": "set soapui topic",
-        "func": "msg.topic=\"soapui\";\nreturn msg;",
-        "outputs": 1,
-        "noerr": 0,
-        "x": 532.7666320800781,
-        "y": 333.48333740234375,
-        "wires": [
-            [
-                "28952f48.9a4268"
-            ]
-        ]
-    },
-    {
-        "id": "6f7f2231.0ce414",
-        "type": "function",
-        "z": "6149644.6ae141c",
-        "name": "merge",
-        "func": "context.data = context.data || {}\n\nswitch (msg.topic) {\n    case \"http\":\n        //msg.req : http request\n        //msg.res : http response\n        context.data.httpreq = msg.req;\n        context.data.httpres = msg.res;\n        break;\n    case \"soapui\":\n        context.data.soapui = msg.payload;\n        break;\n    default:\n    \tbreak;\n}\n\nif (context.data.soapui != null && context.data.httpres != null) {\n    msg.payload = context.data.soapui;\n    msg.req = context.data.httpreq;\n    msg.res = context.data.httpres;\n    msg.headers = { 'Content-Type': 'text/xml' }\n    return msg;\n} else {\n    return null;  //returning a null message = wait for another input\n}",
-        "outputs": 1,
-        "noerr": 0,
-        "x": 716.7666015625,
-        "y": 198.48333740234375,
-        "wires": [
-            [
-                "9e5116ce.52237",
-                "f0eba7af.3fdb2"
-            ]
-        ]
-    },
-    {
-        "id": "6ea24e20.b9d84",
-        "type": "debug",
-        "z": "6149644.6ae141c",
-        "name": "",
-        "active": false,
-        "console": "false",
-        "complete": "true",
-        "x": 346.76666259765625,
-        "y": 169.48333740234375,
-        "wires": []
-    },
-    {
-        "id": "4f0dde1d.a0f888",
-        "type": "debug",
-        "z": "6149644.6ae141c",
-        "name": "",
-        "active": false,
-        "console": "false",
-        "complete": "true",
-        "x": 912.7666015625,
-        "y": 332.48333740234375,
-        "wires": []
-    },
-    {
-        "id": "f0eba7af.3fdb2",
-        "type": "debug",
-        "z": "6149644.6ae141c",
-        "name": "",
-        "active": false,
-        "console": "false",
-        "complete": "true",
-        "x": 835.7666320800781,
-        "y": 131.48333740234375,
-        "wires": []
-    }
+	{
+		"id": "eb4a5a9.53945a8",
+		"type": "tab",
+		"label": "Get Response Test"
+	},
+	{
+		"id": "3724a59f.5aac92",
+		"type": "tab",
+		"label": "SoapUI logic"
+	},
+	{
+		"id": "fe41d47b.5b5188",
+		"type": "http in",
+		"z": "eb4a5a9.53945a8",
+		"name": "Simple",
+		"url": "/hello",
+		"method": "get",
+		"swaggerDoc": "",
+		"x": 168,
+		"y": 150,
+		"wires": [
+			[
+				"fa315cf6.3ec6b8"
+			]
+		]
+	},
+	{
+		"id": "fa315cf6.3ec6b8",
+		"type": "function",
+		"z": "eb4a5a9.53945a8",
+		"name": "Hello",
+		"func": "msg.payload = \"world\"\nreturn msg;",
+		"outputs": 1,
+		"noerr": 0,
+		"x": 336,
+		"y": 150,
+		"wires": [
+			[
+				"d25b790e.38008"
+			]
+		]
+	},
+	{
+		"id": "d25b790e.38008",
+		"type": "http response",
+		"z": "eb4a5a9.53945a8",
+		"name": "world test",
+		"x": 511,
+		"y": 149,
+		"wires": [
+		]
+	},
+	{
+		"id": "403d7266.57d604",
+		"type": "http in",
+		"z": "3724a59f.5aac92",
+		"name": "",
+		"url": "/soapuiproject",
+		"method": "post",
+		"swaggerDoc": "",
+		"x": 142.88333129882812,
+		"y": 60.883331298828125,
+		"wires": [
+			[
+				"d06b1c1e.923678"
+			]
+		]
+	},
+	{
+		"id": "ed651065.7f74b",
+		"type": "file",
+		"z": "3724a59f.5aac92",
+		"name": "",
+		"filename": "/tmp/soapuiproject.xml",
+		"appendNewline": false,
+		"createDir": false,
+		"overwriteFile": "true",
+		"x": 600.88330078125,
+		"y": 60.883331298828125,
+		"wires": [
+		]
+	},
+	{
+		"id": "9df68a40.2fe0e8",
+		"type": "watch",
+		"z": "3724a59f.5aac92",
+		"name": "",
+		"files": "/tmp/soapuiproject.xml",
+		"x": 109.88330078125,
+		"y": 219.88333129882812,
+		"wires": [
+			[
+				"b58a1f05.92ad88"
+			]
+		]
+	},
+	{
+		"id": "4036debc.b62d48",
+		"type": "exec",
+		"z": "3724a59f.5aac92",
+		"command": "testrunner.sh -f /tmp",
+		"addpay": true,
+		"append": "",
+		"useSpawn": "",
+		"timer": "",
+		"name": "execute tests",
+		"x": 499.88330078125,
+		"y": 403.3833312988281,
+		"wires": [
+			[
+				"6660be85.648408"
+			],
+			[
+			],
+			[
+			]
+		]
+	},
+	{
+		"id": "59b911e.21ee6f",
+		"type": "http response",
+		"z": "3724a59f.5aac92",
+		"name": "respond with results",
+		"x": 909.88330078125,
+		"y": 197.88333129882812,
+		"wires": [
+		]
+	},
+	{
+		"id": "6660be85.648408",
+		"type": "file in",
+		"z": "3724a59f.5aac92",
+		"name": "results xml file",
+		"filename": "/tmp/test_case_run_log_report.xml",
+		"format": "utf8",
+		"x": 719.88330078125,
+		"y": 390.8833312988281,
+		"wires": [
+			[
+				"4e274fad.b29588",
+				"28504eb4.9945fa"
+			]
+		]
+	},
+	{
+		"id": "d06b1c1e.923678",
+		"type": "function",
+		"z": "3724a59f.5aac92",
+		"name": "process post",
+		"func": "msg.topic=\"http\";\nvar endpoint = \"null\"\nif (msg.req.headers.hasOwnProperty('endpoint')) {\n    endpoint = msg.req.headers.endpoint;\n}\nmsg.payload += \"\\n\";\nmsg.payload += endpoint;\nreturn msg;",
+		"outputs": 1,
+		"noerr": 0,
+		"x": 352.7666320800781,
+		"y": 60.48333740234375,
+		"wires": [
+			[
+				"ed651065.7f74b",
+				"28504eb4.9945fa",
+				"f01192f9.5f6a28"
+			]
+		]
+	},
+	{
+		"id": "28504eb4.9945fa",
+		"type": "function",
+		"z": "3724a59f.5aac92",
+		"name": "merge",
+		"func": "context.data = context.data || {}\n\nswitch (msg.topic) {\n    case \"http\":\n        //msg.req : http request\n        //msg.res : http response\n        context.data.httpreq = msg.req;\n        context.data.httpres = msg.res;\n        break;\n    case \"soapui\":\n        context.data.soapui = msg.payload;\n        break;\n    default:\n    \tbreak;\n}\n\nif (context.data.soapui != null && context.data.httpres != null) {\n    msg.payload = context.data.soapui;\n    msg.req = context.data.httpreq;\n    msg.res = context.data.httpres;\n    msg.headers = { 'Content-Type': 'text/xml' }\n    return msg;\n} else {\n    return null;  //returning a null message = wait for another input\n}",
+		"outputs": 1,
+		"noerr": 0,
+		"x": 697.7666015625,
+		"y": 197.48333740234375,
+		"wires": [
+			[
+				"59b911e.21ee6f",
+				"c90df43f.e8eb98"
+			]
+		]
+	},
+	{
+		"id": "f01192f9.5f6a28",
+		"type": "debug",
+		"z": "3724a59f.5aac92",
+		"name": "",
+		"active": false,
+		"console": "false",
+		"complete": "true",
+		"x": 389.76666259765625,
+		"y": 197.48333740234375,
+		"wires": [
+		]
+	},
+	{
+		"id": "4e274fad.b29588",
+		"type": "debug",
+		"z": "3724a59f.5aac92",
+		"name": "",
+		"active": false,
+		"console": "false",
+		"complete": "true",
+		"x": 920.7666015625,
+		"y": 390.48333740234375,
+		"wires": [
+		]
+	},
+	{
+		"id": "c90df43f.e8eb98",
+		"type": "debug",
+		"z": "3724a59f.5aac92",
+		"name": "",
+		"active": false,
+		"console": "false",
+		"complete": "true",
+		"x": 835.7666320800781,
+		"y": 131.48333740234375,
+		"wires": [
+		]
+	},
+	{
+		"id": "6c6720b2.18308",
+		"type": "function",
+		"z": "3724a59f.5aac92",
+		"name": "set endpoint",
+		"func": "msg.topic=\"soapui\";\nvar splitFile = msg.payload.split(\"\\n\");\nvar endpoint = splitFile.slice(-1)[0];\nif (endpoint == \"null\") {\n    msg.payload = \" -M /tmp/soapuiproject.xml\";\n} else {\n    msg.payload = \" -e \" + endpoint + \" -M /tmp/soapuiproject.xml\";\n}\nreturn msg;",
+		"outputs": 1,
+		"noerr": 0,
+		"x": 275.76666259765625,
+		"y": 402.48333740234375,
+		"wires": [
+			[
+				"4036debc.b62d48",
+				"e91681b0.33ba7"
+			]
+		]
+	},
+	{
+		"id": "e91681b0.33ba7",
+		"type": "debug",
+		"z": "3724a59f.5aac92",
+		"name": "",
+		"active": false,
+		"console": "false",
+		"complete": "true",
+		"x": 476.7666320800781,
+		"y": 338.48333740234375,
+		"wires": [
+		]
+	},
+	{
+		"id": "b58a1f05.92ad88",
+		"type": "file in",
+		"z": "3724a59f.5aac92",
+		"name": "",
+		"filename": "/tmp/soapuiproject.xml",
+		"format": "utf8",
+		"x": 175.76666259765625,
+		"y": 311.9666442871094,
+		"wires": [
+			[
+				"6c6720b2.18308"
+			]
+		]
+	}
 ]
