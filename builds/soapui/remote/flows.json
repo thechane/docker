@@ -99,7 +99,7 @@
 		"id": "4036debc.b62d48",
 		"type": "exec",
 		"z": "3724a59f.5aac92",
-		"command": "testrunner.sh -f /tmp",
+		"command": "head -n -1 /tmp/soapuiproject.xml > /tmp/soapuiproject2.xml && testrunner.sh -f /tmp",
 		"addpay": true,
 		"append": "",
 		"useSpawn": "",
@@ -222,11 +222,11 @@
 		"type": "function",
 		"z": "3724a59f.5aac92",
 		"name": "set endpoint",
-		"func": "msg.topic=\"soapui\";\nvar splitFile = msg.payload.split(\"\\n\");\nvar endpoint = splitFile.slice(-1)[0];\nif (endpoint == \"null\") {\n    msg.payload = \" -M /tmp/soapuiproject.xml\";\n} else {\n    msg.payload = \" -e \" + endpoint + \" -M /tmp/soapuiproject.xml\";\n}\nreturn msg;",
+		"func": "msg.topic=\"soapui\";\nvar splitFile = msg.payload.split(\"\\n\");\nvar endpoint = splitFile.slice(-1)[0];\nif (endpoint == \"null\") {\n    msg.payload = \" -M /tmp/soapuiproject2.xml\";\n} else {\n    msg.payload = \" -e \" + endpoint + \" -M /tmp/soapuiproject2.xml\";\n}\nreturn msg;",
 		"outputs": 1,
 		"noerr": 0,
-		"x": 275.76666259765625,
-		"y": 402.48333740234375,
+		"x": 227.76666259765625,
+		"y": 404.48333740234375,
 		"wires": [
 			[
 				"4036debc.b62d48",
