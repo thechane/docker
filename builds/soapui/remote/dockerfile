@@ -1,7 +1,7 @@
-FROM openjdk:8-jre-alpine
+FROM groovy:jre-alpine
 ENV SOAPUI_VERSION 5.3.0
 RUN apk add --update python nodejs bash gcc make g++ curl && \
-  npm install -g node-red && \
+  npm install -g node-red node-red-node-base64 && \
   mkdir -p /home/nodered/.node-red/ /opt && \
   curl  http://cdn01.downloads.smartbear.com/soapui/${SOAPUI_VERSION}/SoapUI-${SOAPUI_VERSION}-linux-bin.tar.gz \
   | gunzip -c - | tar -xf - -C /opt && \
