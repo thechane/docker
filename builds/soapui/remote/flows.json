@@ -58,11 +58,12 @@
         "url": "/soapuiproject",
         "method": "post",
         "swaggerDoc": "",
-        "x": 105,
+        "x": 103,
         "y": 79.88333129882812,
         "wires": [
             [
-                "ae6abdc2.30f588"
+                "ae6abdc2.30f588",
+                "f01192f9.5f6a28"
             ]
         ]
     },
@@ -112,7 +113,9 @@
             [
                 "c68198cb.34c248"
             ],
-            []
+            [
+                "c68198cb.34c248"
+            ]
         ]
     },
     {
@@ -120,32 +123,16 @@
         "type": "http response",
         "z": "3724a59f.5aac92",
         "name": "respond with results",
-        "x": 966.88330078125,
-        "y": 238.88333129882812,
+        "x": 988.88330078125,
+        "y": 224.88333129882812,
         "wires": []
-    },
-    {
-        "id": "6660be85.648408",
-        "type": "file in",
-        "z": "3724a59f.5aac92",
-        "name": "results xml file",
-        "filename": "/tmp/test_case_run_log_report.xml",
-        "format": "utf8",
-        "x": 795.88330078125,
-        "y": 430.8833312988281,
-        "wires": [
-            [
-                "4e274fad.b29588",
-                "28504eb4.9945fa"
-            ]
-        ]
     },
     {
         "id": "d06b1c1e.923678",
         "type": "function",
         "z": "3724a59f.5aac92",
         "name": "process post",
-        "func": "//Set the topic for the Merge later\nmsg.topic=\"http\";\nvar pl = msg.payload;\n//sanitize the XML\n// pl.replace(/&apos;/g, \"'\")\n// pl.replace(/&quot;/g, '\"')\n// pl.replace(/&gt;/g, '>')\n// pl.replace(/&lt;/g, '<')\n// pl.replace(/&amp;/g, '&');\n\n//append the endpoint for later extraction\nvar endpoint = \"null\"\nif (msg.req.headers.hasOwnProperty('endpoint')) {\n    endpoint = msg.req.headers.endpoint;\n}\npl += \"!&&!\";\npl += endpoint;\nmsg.payload = pl;\nreturn msg;",
+        "func": "//Set the topic for the Merge later\nmsg.topic = \"http\";\nvar pl = msg.payload;\n//sanitize the XML\n// pl.replace(/&apos;/g, \"'\")\n// pl.replace(/&quot;/g, '\"')\n// pl.replace(/&gt;/g, '>')\n// pl.replace(/&lt;/g, '<')\n// pl.replace(/&amp;/g, '&');\n\n//append the endpoint for later extraction\nvar endpoint = \"null\"\nif (msg.req.headers.hasOwnProperty('endpoint')) {\n    endpoint = msg.req.headers.endpoint;\n}\npl += \"!&&!\";\npl += endpoint;\nmsg.payload = pl;\nreturn msg;",
         "outputs": 1,
         "noerr": 0,
         "x": 611.7666015625,
@@ -153,8 +140,7 @@
         "wires": [
             [
                 "ed651065.7f74b",
-                "28504eb4.9945fa",
-                "f01192f9.5f6a28"
+                "28504eb4.9945fa"
             ]
         ]
     },
@@ -163,7 +149,7 @@
         "type": "function",
         "z": "3724a59f.5aac92",
         "name": "merge",
-        "func": "context.data = context.data || new Object();\n\nswitch (msg.topic) {\n    case \"http\":\n        context.data.req = msg.req;\n        context.data.res = msg.res;\n        msg = null;\n        break;\n    case \"soapui\":\n        context.data.payload = msg.payload;\n        msg = null;\n        break;\n    default:\n        msg = null;\n    \tbreak;\n}\n\nif (context.data.req != null && context.data.res != null && context.data.payload != null) {\n\tmsg2 = new Object();\n    msg2 = context.data;\n    flow.set('count', flow.get('count') + 1);\n    context.data=null;\n\treturn msg2;\n} else {\n    return msg;\n}",
+        "func": "context.data = context.data || new Object();\n\nswitch (msg.topic) {\n    case \"http\":\n        context.data.req = msg.req;\n        context.data.res = msg.res;\n        msg = null;\n        break;\n    case \"soapui\":\n        context.data.payload = msg.payload;\n        msg = null;\n        break;\n    default:\n        msg = null;\n    \tbreak;\n}\n\nif (context.data.req != null && context.data.res != null && context.data.payload != null) {\n\tmsg2 = new Object();\n    msg2 = context.data;\n    context.data=null;\n\treturn msg2;\n} else {\n    return msg;\n}",
         "outputs": 1,
         "noerr": 0,
         "x": 608.7666015625,
@@ -183,20 +169,8 @@
         "active": false,
         "console": "false",
         "complete": "true",
-        "x": 781.7666015625,
-        "y": 24.48333740234375,
-        "wires": []
-    },
-    {
-        "id": "4e274fad.b29588",
-        "type": "debug",
-        "z": "3724a59f.5aac92",
-        "name": "",
-        "active": false,
-        "console": "false",
-        "complete": "true",
-        "x": 835.7666015625,
-        "y": 540.4833374023438,
+        "x": 305.7666015625,
+        "y": 29.48333740234375,
         "wires": []
     },
     {
@@ -243,27 +217,11 @@
         ]
     },
     {
-        "id": "8dca6995.3a4c28",
-        "type": "function",
-        "z": "3724a59f.5aac92",
-        "name": "set topic",
-        "func": "msg.topic=\"soapui\";\nreturn msg;",
-        "outputs": 1,
-        "noerr": 0,
-        "x": 603.7666015625,
-        "y": 430.4000549316406,
-        "wires": [
-            [
-                "6660be85.648408"
-            ]
-        ]
-    },
-    {
         "id": "ae6abdc2.30f588",
         "type": "function",
         "z": "3724a59f.5aac92",
         "name": "wait4it",
-        "func": "var count = flow.get('count') || 0;\nvar id = flow.get('id') || 0;\nflow.set('count', count);\nflow.set('id', id);\nmsg.waitcount = msg.waitcount || 0;\n\nif (flow.get('count') === flow.get('id')) {\n    flow.set('id', flow.get('id') + 1);\n\treturn [msg, null];\n} else if (msg.waitcount > 10) {\n    node.warn(\"Message buffer timeout, purging 1 request\");\n    return [null,null];\n} else {\n    node.warn(msg.waitcount + \" waiting for id \" + flow.get('id') + \" to equal count \" + flow.get('count'))\n    msg.waitcount += 1;\n    return [null, msg];\n}",
+        "func": "msg.waitcount = msg.waitcount || 0;\nmsg.topic = msg._msgid;\n\nif (flow.get('count') === flow.get('id')) {\n    flow.set('id', flow.get('id') + 1);\n\treturn [msg, null];\n} else if (msg.waitcount > 20) {\n    node.warn(\"Message buffer timeout, purging 1 request\");\n    return [null,null];\n} else {\n    node.warn(msg.waitcount + \":\" + msg._msgid + \" waiting for id \" + flow.get('id') + \" to equal count \" + flow.get('count'))\n    msg.waitcount += 1;\n    return [null, msg];\n}",
         "outputs": "2",
         "noerr": 0,
         "x": 303.76666259765625,
@@ -281,19 +239,19 @@
         "id": "c3f26391.e85d3",
         "type": "delay",
         "z": "3724a59f.5aac92",
-        "name": "Qing3sec",
-        "pauseType": "delay",
+        "name": "",
+        "pauseType": "queue",
         "timeout": "3",
         "timeoutUnits": "seconds",
         "rate": "1",
-        "nbRateUnits": "1",
+        "nbRateUnits": "3",
         "rateUnits": "second",
         "randomFirst": "1",
         "randomLast": "5",
         "randomUnits": "seconds",
         "drop": false,
-        "x": 309.76666259765625,
-        "y": 202.0333251953125,
+        "x": 299.76666259765625,
+        "y": 200.0333251953125,
         "wires": [
             [
                 "ae6abdc2.30f588"
@@ -308,8 +266,8 @@
         "active": false,
         "console": "false",
         "complete": "payload",
-        "x": 541,
-        "y": 578,
+        "x": 646,
+        "y": 509.0000305175781,
         "wires": []
     },
     {
@@ -330,12 +288,114 @@
         "type": "base64",
         "z": "3724a59f.5aac92",
         "name": "",
-        "x": 763,
-        "y": 239,
+        "x": 784,
+        "y": 225,
         "wires": [
             [
-                "59b911e.21ee6f"
+                "59b911e.21ee6f",
+                "a8d504df.f7da78"
             ]
+        ]
+    },
+    {
+        "id": "6660be85.648408",
+        "type": "file in",
+        "z": "3724a59f.5aac92",
+        "name": "results xml file",
+        "filename": "/tmp/test_case_run_log_report.xml",
+        "format": "utf8",
+        "x": 795.88330078125,
+        "y": 430.8833312988281,
+        "wires": [
+            [
+                "28504eb4.9945fa"
+            ]
+        ]
+    },
+    {
+        "id": "8dca6995.3a4c28",
+        "type": "function",
+        "z": "3724a59f.5aac92",
+        "name": "set topic",
+        "func": "msg.topic=\"soapui\";\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 603.7666015625,
+        "y": 430.4000549316406,
+        "wires": [
+            [
+                "6660be85.648408"
+            ]
+        ]
+    },
+    {
+        "id": "999641e6.8114d",
+        "type": "function",
+        "z": "3724a59f.5aac92",
+        "name": "set flow vars",
+        "func": "flow.set('count', 0);\nflow.set('id', 0);",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 366.76666259765625,
+        "y": 605.0166625976562,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "5098ce31.ef21c8",
+        "type": "inject",
+        "z": "3724a59f.5aac92",
+        "name": "",
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "repeat": "",
+        "crontab": "",
+        "once": true,
+        "x": 167.36666870117188,
+        "y": 604,
+        "wires": [
+            [
+                "999641e6.8114d"
+            ]
+        ]
+    },
+    {
+        "id": "a8d504df.f7da78",
+        "type": "delay",
+        "z": "3724a59f.5aac92",
+        "name": "",
+        "pauseType": "delay",
+        "timeout": "4",
+        "timeoutUnits": "seconds",
+        "rate": "1",
+        "nbRateUnits": "1",
+        "rateUnits": "second",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": false,
+        "x": 789.7666015625,
+        "y": 299.48333740234375,
+        "wires": [
+            [
+                "5019ffa7.be4868"
+            ]
+        ]
+    },
+    {
+        "id": "5019ffa7.be4868",
+        "type": "function",
+        "z": "3724a59f.5aac92",
+        "name": "allow next request",
+        "func": "flow.set('count', flow.get('count') + 1);\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 988.7666015625,
+        "y": 299.01666259765625,
+        "wires": [
+            []
         ]
     }
 ]
