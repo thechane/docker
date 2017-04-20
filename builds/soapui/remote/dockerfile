@@ -12,4 +12,5 @@ ENV PATH ${PATH}:/opt/SoapUI/bin
 COPY ./static-settings.js /root/.node-red/settings.js
 COPY ./flows.json /home/nodered/.node-red/flows.json
 COPY ./process.py /home/nodered/process.py
+RUN chmod 700 /home/nodered/process.py
 ENTRYPOINT ["/usr/bin/node-red", "-v"]
