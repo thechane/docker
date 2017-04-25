@@ -12,8 +12,8 @@
         "url": "/hello",
         "method": "get",
         "swaggerDoc": "",
-        "x": 92.00003051757812,
-        "y": 496.0000305175781,
+        "x": 142.00004768371582,
+        "y": 461.0000457763672,
         "wires": [
             [
                 "fa315cf6.3ec6b8"
@@ -28,8 +28,8 @@
         "func": "msg.payload = \"world\"\nreturn msg;",
         "outputs": 1,
         "noerr": 0,
-        "x": 260.0000305175781,
-        "y": 496.0000305175781,
+        "x": 286.0000457763672,
+        "y": 461.0000457763672,
         "wires": [
             [
                 "d25b790e.38008"
@@ -41,8 +41,8 @@
         "type": "http response",
         "z": "eb4a5a9.53945a8",
         "name": "world test",
-        "x": 435.0000305175781,
-        "y": 495.0000305175781,
+        "x": 461.0000457763672,
+        "y": 460.0000457763672,
         "wires": []
     },
     {
@@ -53,7 +53,7 @@
         "url": "/soapuiproject",
         "method": "post",
         "swaggerDoc": "",
-        "x": 106.88333129882812,
+        "x": 130.88333892822266,
         "y": 206.39999389648438,
         "wires": [
             [
@@ -71,8 +71,8 @@
         "useSpawn": "",
         "timer": "",
         "name": "execute tests",
-        "x": 719.7666015625,
-        "y": 211.89993286132812,
+        "x": 753.7666435241699,
+        "y": 305.89994049072266,
         "wires": [
             [
                 "26139f39.c591c8",
@@ -91,8 +91,8 @@
         "type": "http response",
         "z": "eb4a5a9.53945a8",
         "name": "respond with results",
-        "x": 1149.7666015625,
-        "y": 27.399993896484375,
+        "x": 1166.766616821289,
+        "y": 80.39999580383301,
         "wires": []
     },
     {
@@ -117,11 +117,11 @@
         "type": "function",
         "z": "eb4a5a9.53945a8",
         "name": "wait4it",
-        "func": "msg.waitcount = msg.waitcount || 0;\nmsg.topic = msg._msgid;\n\nif (flow.get('count') === flow.get('id')) {\n    flow.set('id', flow.get('id') + 1);\n\treturn [msg, null];\n} else if (msg.waitcount > 60) {\n    node.warn(\"Message buffer timeout, purging 1 request\");\n    return [null,null];\n} else {\n    node.warn(msg.waitcount + \":\" + msg._msgid + \" waiting for id \" + flow.get('id') + \" to equal count \" + flow.get('count'))\n    msg.waitcount += 1;\n    return [null, msg];\n}",
+        "func": "msg.waitcount = msg.waitcount || 0;\nmsg.topic = msg._msgid;\n\nif (flow.get('count') === flow.get('id')) {\n    flow.set('id', flow.get('id') + 1);\n\treturn [msg, null];\n} else if (msg.waitcount > 60) {\n    node.warn(\"Message buffer timeout, purging 1 request\");\n    return [null,null];\n} else {\n    //node.warn(msg.waitcount + \":\" + msg._msgid + \" waiting for id \" + flow.get('id') + \" to equal count \" + flow.get('count'))\n    msg.waitcount += 1;\n    return [null, msg];\n}",
         "outputs": "2",
         "noerr": 0,
-        "x": 307.6499938964844,
-        "y": 204.91665649414062,
+        "x": 319.6500015258789,
+        "y": 204.9166717529297,
         "wires": [
             [
                 "6ef621f9.9a234"
@@ -146,8 +146,8 @@
         "randomLast": "5",
         "randomUnits": "seconds",
         "drop": false,
-        "x": 314.6499938964844,
-        "y": 326.54998779296875,
+        "x": 324.65000915527344,
+        "y": 326.54999256134033,
         "wires": [
             [
                 "4c24cc6d.66b864"
@@ -159,8 +159,8 @@
         "type": "base64",
         "z": "eb4a5a9.53945a8",
         "name": "",
-        "x": 942.88330078125,
-        "y": 81.51666259765625,
+        "x": 966.8833312988281,
+        "y": 79.51666450500488,
         "wires": [
             [
                 "b300c455.53875",
@@ -176,8 +176,8 @@
         "active": false,
         "console": "false",
         "complete": "false",
-        "x": 614.7666015625,
-        "y": 306.25,
+        "x": 557.7666625976562,
+        "y": 321.2500057220459,
         "wires": []
     },
     {
@@ -188,8 +188,8 @@
         "active": false,
         "console": "false",
         "complete": "false",
-        "x": 1012.7666015625,
-        "y": 476.2500305175781,
+        "x": 1020.7667083740234,
+        "y": 415.25006103515625,
         "wires": []
     },
     {
@@ -200,8 +200,8 @@
         "func": "flow.set('count', flow.get('count') + 1);\nreturn null;",
         "outputs": 1,
         "noerr": 0,
-        "x": 1265.88330078125,
-        "y": 134.88333129882812,
+        "x": 1190.8833045959473,
+        "y": 181.88336181640625,
         "wires": [
             []
         ]
@@ -214,8 +214,8 @@
         "func": "flow.set('count', 0);\nflow.set('id', 0);",
         "outputs": 1,
         "noerr": 0,
-        "x": 311.8833312988281,
-        "y": 76.88333129882812,
+        "x": 342.88333892822266,
+        "y": 92.88333129882812,
         "wires": [
             []
         ]
@@ -224,15 +224,15 @@
         "id": "5cbe47fb.20a24",
         "type": "inject",
         "z": "eb4a5a9.53945a8",
-        "name": "",
+        "name": "startup init",
         "topic": "",
         "payload": "",
         "payloadType": "date",
         "repeat": "",
         "crontab": "",
         "once": true,
-        "x": 138.48333740234375,
-        "y": 77.86666870117188,
+        "x": 169.48334503173828,
+        "y": 93.86666870117188,
         "wires": [
             [
                 "9f3c71ec.036898"
@@ -246,8 +246,8 @@
         "name": "read report",
         "filename": "/tmp/test_case_run_log_report.xml",
         "format": "utf8",
-        "x": 734.88330078125,
-        "y": 26.883331298828125,
+        "x": 783.8833770751953,
+        "y": 79.88333320617676,
         "wires": [
             [
                 "e0992b9d.7bb5e8"
@@ -259,11 +259,11 @@
         "type": "function",
         "z": "eb4a5a9.53945a8",
         "name": "check payload",
-        "func": "if (msg.payload === \"\") {\n    msg.payload = \"No output from testrunner - aborting\";\n    node.warn(msg.payload);\n    return [null,msg];\n} else {\n    return [msg,null];\n}\nreturn msg;",
+        "func": "if (msg.payload === \"\") {\n    msg.payload = \"No output from testrunner - aborting\";\n    node.warn(msg.payload);\n    return [null,msg];\n} else {\n    return [msg,null];\n}",
         "outputs": "2",
         "noerr": 0,
-        "x": 711.7666015625,
-        "y": 108.66667175292969,
+        "x": 750.7667694091797,
+        "y": 193.66669464111328,
         "wires": [
             [
                 "3e27f81c.70c28"
@@ -281,8 +281,8 @@
         "active": false,
         "console": "false",
         "complete": "false",
-        "x": 982.7666015625,
-        "y": 561.8999328613281,
+        "x": 984.7666625976562,
+        "y": 483.8999195098877,
         "wires": []
     },
     {
@@ -295,8 +295,8 @@
         "useSpawn": "",
         "timer": "",
         "name": "del report",
-        "x": 1085.36669921875,
-        "y": 147.25,
+        "x": 1011.3668670654297,
+        "y": 194.25000762939453,
         "wires": [
             [
                 "bae3f115.aa5f3"
@@ -313,8 +313,8 @@
         "active": false,
         "console": "false",
         "complete": "true",
-        "x": 1026.36669921875,
-        "y": 382.25,
+        "x": 1029.3667449951172,
+        "y": 345.2500286102295,
         "wires": []
     }
 ]
