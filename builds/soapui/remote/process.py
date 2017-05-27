@@ -21,7 +21,7 @@ goXML.write(gzip.GzipFile(fileobj=StringIO(base64.b64decode(fileString))).read()
 goXML.close()
 
 try:
-    if endpoint is None:
+    if endpoint is None or endpoint == "null":
         print check_output(["testrunner.sh", "-Djava.awt.headless=true", "-f", "/tmp", "-M", "/tmp/go.xml"], stderr=sys.stdout.fileno())
     else:
         print check_output(["testrunner.sh", "-Djava.awt.headless=true", "-f", "/tmp", "-M", "-e", endpoint, "/tmp/go.xml"], stderr=sys.stdout.fileno())
