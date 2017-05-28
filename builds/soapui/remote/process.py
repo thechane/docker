@@ -11,7 +11,7 @@ except OSError:
 
 fileString = ''.join(sys.argv[1:])
 endpoint = None
-if '*' in file:
+if '*' in fileString:
     splitFile = fileString.split('*')
     endpoint = splitFile.pop()
     #add more here if needed later
@@ -29,4 +29,3 @@ except CalledProcessError, e:
     resXML = open("/tmp/test_case_run_log_report.xml", "w")
     resXML.write("CalledProcessError during execution : " + str(e))
     resXML.close()
-
